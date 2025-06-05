@@ -1,6 +1,27 @@
 /* styles.css */
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+*,
+*::before,
+*::after {
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
+
+body {
+  height: 100vh;
+  width: 100vw;
+  scroll-behavior: smooth;
+  line-height: 1.5;
+}
+
+.container {
+  height: 90vh;
+  width: 90vw;
+  margin: 5vh auto;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items:center;  
+}
+/* container big container */
+/* -> display-container, button-container */
+
