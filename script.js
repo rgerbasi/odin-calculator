@@ -46,17 +46,23 @@ buttons.forEach((button) => {
         }
     } // end of if button.id is number
 });
+
+function updateDisplay() {
+    display.textContent = displayString;
+}
 // e is event passed in, this is the button
 function handleDeletePressed(e) {
-    print("backspace")
-    // print(e)
+    if (!displayString.length) return; //do nothing if display string is empty
+
+    displayString = displayString.slice(0,-1);
+    updateDisplay()
 }
 
 function handleNumberPressed(e) {
     // print(e);
     //populate display, store value
     displayString += this.id;
-    display.textContent = displayString;
+    updateDisplay()
 }
 
 function handleOperatorPressed(e) {
