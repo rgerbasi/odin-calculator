@@ -40,14 +40,17 @@ body {
 /* display */
 .display-container{
   flex: 0 0 25%;
-
+  
   display: flex;
-  align-items: center;
+  align-items: stretch;
 }
 #display {
   /* min-width: 20%; */
-  flex: 3 1 auto;
-  
+  flex: 0 0 87.5%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .delete-button {
   align-self: stretch;
