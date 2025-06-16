@@ -9,7 +9,6 @@ let displayString = "";
 const display = document.querySelector('#display');
 
 const buttons = document.querySelectorAll('button');
-console.log(buttons)
 
 function print(thing) { console.log(thing);}
 
@@ -46,9 +45,33 @@ buttons.forEach((button) => {
         }
     } // end of if button.id is number
 });
-
+let baseSize = 4; //em
 function updateDisplay() {
     display.textContent = displayString;
+    adaptFontSize();
+}
+function isOverflown(element) { return element.scrollWidth > element.clientWidth;}
+function adaptFontSize() {
+    //from stack overflw https://stackoverflow.com/questions/56099198/make-html-input-font-size-shrink-as-more-type-is-typed
+    let curSize = parseInt(
+      window.getComputedStyle(display, null).getPropertyValue("font-size"),
+      10
+    );
+    // console.log(curSize)
+    if (isOverflown(display)) {
+        // console.log("overflow")
+        for (; isOverflown(display); curSize--){
+            curSize--;
+            display.style.fontSize = `${curSize}px`;
+        }
+    } else {
+        curSize = display.clientHeight/2;
+        display.style.fontSize = `${curSize}px`;
+         for (; isOverflown(display); curSize--){
+            curSize--;
+            display.style.fontSize = `${curSize}px`;
+        }
+    }
 }
 // e is event passed in, this is the button
 function handleDeletePressed(e) {
