@@ -46,6 +46,7 @@ buttons.forEach((button) => {
     } // end of if button.id is number
 });
 let baseSize = 4; //em
+let originalHeight = display.clientHeight;
 function updateDisplay() {
     display.textContent = displayString;
     adaptFontSize();
@@ -61,14 +62,12 @@ function adaptFontSize() {
     if (isOverflown(display)) {
         // console.log("overflow")
         for (; isOverflown(display); curSize--){
-            curSize--;
             display.style.fontSize = `${curSize}px`;
         }
     } else {
-        curSize = display.clientHeight/2;
+        curSize = originalHeight/2;
         display.style.fontSize = `${curSize}px`;
          for (; isOverflown(display); curSize--){
-            curSize--;
             display.style.fontSize = `${curSize}px`;
         }
     }
@@ -89,7 +88,25 @@ function handleNumberPressed(e) {
 }
 
 function handleOperatorPressed(e) {
-    print(this)
+    let op = this.id;
+    let opString = "";
+    switch (op){
+        case "divide":
+            opString = "÷"
+            break;
+        case "times":
+            opString = "×"
+            break;
+        case "minus":
+            opString = "−"
+            break;
+        case "plus":
+            opString = "+"
+            break;
+    }
+    print(opString)
+    displayString += `${opString}`;
+    updateDisplay()
 }
 
 function handleDecimalPressed(e) {
