@@ -3,15 +3,15 @@
 /* 
 Current Idea: get all buttons, switch statement for different listeners
 */
-let operands = [];
-let operators = [];
+let entries = [];
+let current = "";
 let displayString = "";
 const display = document.querySelector('#display');
 
 const buttons = document.querySelectorAll('button');
-
-function print(thing) { console.log(thing);}
-
+const numberButtons = document.querySelectorAll('.number');
+const operatorButtons =document.querySelectorAll('.operator');
+const equalButton = document.querySelector("#equals");
 buttons.forEach((button) => {
     //assign proper listener
     if (!button.id) return; // do nothing if no button id
@@ -47,7 +47,10 @@ buttons.forEach((button) => {
 });
 let baseSize = 4; //em
 let originalHeight = display.clientHeight;
+//DISPLAY FUNCTIONS
 function updateDisplay() {
+    checkValidButtons();
+    displayString = toString([...entries, current]);
     display.textContent = displayString;
     adaptFontSize();
 }
@@ -72,22 +75,52 @@ function adaptFontSize() {
         }
     }
 }
+function checkValidButtons(){
+    decimalButton.disabled = (current.includes("."));
+    operatorButtons.forEach((button) => {
+        button.disabled = (!isNumber(current)); //only allow operator buttons if theres is number
+    })
+    equalButton.disabled = (isOperator(current));
+}
+//BUTTON HANDLERS
 // e is event passed in, this is the button
 function handleDeletePressed(e) {
-    if (!displayString.length) return; //do nothing if display string is empty
-
-    displayString = displayString.slice(0,-1);
+    // if (!displayString.length) return; //do nothing if display string is empty
+    // displayString = displayString.slice(0,-1);  string attempot
+    if (!current.length && !entries.length) return; //empty
+    //token attempt
+    if (current.length) {
+        current = current.slice(0,-1);
+    } else {
+        //pop last entry
+        current = entries.pop();
+        if (isNumber(current)) {
+            current = current.slice(0,-1);
+        } else {
+            current = "";
+        }
+    }
     updateDisplay()
 }
-
+//logic: update current value as number gets pressed then push value into array when operator is pressed
 function handleNumberPressed(e) {
-    // print(e);
-    //populate display, store value
-    displayString += this.id;
+    //Check if entry should be pushed and current should be updated
+    if (isOperator(current)) {
+        entries.push(current);
+        current = "";
+    }
+    
+    current += this.id;
+    // displayString += this.id;
     updateDisplay()
 }
 
 function handleOperatorPressed(e) {
+    //check if entry should be pushed and current should be updated
+    if (isNumber(current)){
+        entries.push(current);
+        current = "";
+    }
     let op = this.id;
     let opString = "";
     switch (op){
@@ -104,13 +137,14 @@ function handleOperatorPressed(e) {
             opString = "+"
             break;
     }
-    print(opString)
-    displayString += `${opString}`;
-    updateDisplay()
+    current = opString;
+    updateDisplay();
 }
-
+const decimalButton = document.querySelector("#decimal");
 function handleDecimalPressed(e) {
-    print(this)
+    // print(this);
+    current += ".";
+    updateDisplay();
 }
 
 function handleRandomPressed(e) {
@@ -124,3 +158,19 @@ function handleClearPressed(e) {
 function handleEqualsPressed(e){
     print(this)
 }
+//Helper functions
+function print(thing) { console.log(thing);}
+function isNumber(str) { return /\d/.test(str);}
+function isOperator(str) { return ["+","−","×","÷"].includes(str)}
+function toString(arr) {
+    let res = "";
+    res = arr.reduce( (acc, curr) => {
+        return acc + curr
+    }
+    ); //wanting to start from first value of array so i dont include initial
+    return res;
+
+}
+
+//initial calls
+updateDisplay();
