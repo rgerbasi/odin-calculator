@@ -92,9 +92,9 @@ function handleDeletePressed(e) {
     if (current.length) {
         current = current.slice(0,-1);
     } else {
-        //pop last entry
+        //pop last entry for delete
         current = entries.pop();
-        if (isNumber(current)) {
+        if (isNumber(current)) { //if is number delete the same way as the previous
             current = current.slice(0,-1);
         } else {
             current = "";
@@ -111,7 +111,6 @@ function handleNumberPressed(e) {
     }
     
     current += this.id;
-    // displayString += this.id;
     updateDisplay()
 }
 
@@ -148,27 +147,37 @@ function handleDecimalPressed(e) {
 }
 
 function handleRandomPressed(e) {
-    print(this)
+    let num = parseInt(current);
+    let threshhold = isNaN(num) ? 1 : num;
+    threshhold = (threshhold < 1? 1 : threshhold)
+    current = (Math.random() * threshhold).toFixed(2);
+    updateDisplay();
 }
 
 function handleClearPressed(e) {
-    print(this)
+    current = "";
+    entries.length = 0;
+    updateDisplay();
 }
 
 function handleEqualsPressed(e){
-    print(this)
+    operate();
+   
 }
 //Helper functions
 function print(thing) { console.log(thing);}
 function isNumber(str) { return /\d/.test(str);}
 function isOperator(str) { return ["+","−","×","÷"].includes(str)}
 function toString(arr) {
-    let res = "";
-    res = arr.reduce( (acc, curr) => {
-        return acc + curr
-    }
-    ); //wanting to start from first value of array so i dont include initial
-    return res;
+    return arr.join("\u00A0"); //join on unbreakablewhitespace
+}
+let operations = {
+    "+":1,
+    "−":2,
+    "×":3,
+    "÷":4,
+}
+function operate(a, b) {
 
 }
 
