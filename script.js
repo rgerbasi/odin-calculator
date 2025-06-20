@@ -78,7 +78,7 @@ function adaptFontSize() {
 function checkValidButtons(){
     decimalButton.disabled = (current.includes("."));
     operatorButtons.forEach((button) => {
-        button.disabled = (!isNumber(current)); //only allow operator buttons if theres is number
+        button.disabled = (current === "" && !entries.length); //only allow operator buttons if theres is number
     })
     equalButton.disabled = (isOperator(current));
 }
@@ -161,25 +161,73 @@ function handleClearPressed(e) {
 }
 
 function handleEqualsPressed(e){
-    operate();
-   
+    let postfix = toPostFix([...entries, current]);
+    print(postfix);
+    current = evaluate(postfix);
+    entries.length = 0 ;
+    updateDisplay();
 }
 //Helper functions
 function print(thing) { console.log(thing);}
 function isNumber(str) { return /\d/.test(str);}
 function isOperator(str) { return ["+","−","×","÷"].includes(str)}
 function toString(arr) {
-    return arr.join("\u00A0"); //join on unbreakablewhitespace
+    // return arr.join("\u00A0"); //join on unbreakablewhitespace
+    return arr.join("");
+}
+function getPrecedence(op) {
+    if (op === "×" || op === "÷") return 2;
+    if (op === "−" || op === "+") return 1;
+}
+function toPostFix(arr) {
+    let output = [];
+    let operators = [];
+
+    for (token of arr){
+        // print(token);
+        if (isNumber(token)) {
+            output.push(token);
+        }
+
+        if (isOperator(token)){
+            //check top of stack and add to output if op stack has >= prec
+            while (
+                operators.length &&
+                (getPrecedence(operators[operators.length - 1]) >= getPrecedence(token))
+            ) {
+                output.push(operators.pop());
+            }
+            operators.push(token);
+        }
+    }
+    while (operators.length){
+        output.push(operators.pop());
+    }
+    return output;
 }
 let operations = {
-    "+":1,
-    "−":2,
-    "×":3,
-    "÷":4,
+    "+":(a,b) => a + b,
+    "−":(a,b) => a-b,
+    "×":(a,b) => a*b,
+    "÷":(a,b) => a/b,
 }
-function operate(a, b) {
-
+function evaluate(postfix){
+    let stack = [];
+    for (token of postfix){
+        if (isNumber(token)){
+            stack.push(+token);
+        }
+        if (isOperator(token)){
+            let b = stack.pop();
+            let a = stack.pop();
+            let result = operations[token](a,b);
+            stack.push(result);
+        }
+    }
+    print(stack);
+    //validating result
+    let result = stack.pop();
+    return String(result);
 }
-
 //initial calls
 updateDisplay();
