@@ -29,8 +29,10 @@ body {
 .calculator-container {
   min-width: 200px;
   max-width: 500px;
-  height: 40vh;
-  width: 50vw;
+  height: 60vh;
+  width: 70vw;
+  
+  padding: 5% 4%;
 
   display: flex;
   flex-flow: column nowrap;
@@ -71,4 +73,22 @@ body {
 .row > * {
   flex: 1 1 25%;
 
+}
+
+.calculator-container{
+  background-color: grey;
+
+}
+.display-container{
+  background-color: rgba(0, 104, 9, 0.399);
+}
+#display {
+  color: rgb(255, 255, 255);
+}
+button {
+  font-size: 1.5em;
+}
+
+.row > button {
+  border-radius: 1.5em;
 }
