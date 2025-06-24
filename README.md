@@ -1,8 +1,10 @@
 # odin-calculator
 The Odin Project Foundations Course Final Project
 
+## Completed
+- also added shunting yard algorithm to handle more operators and operands based on precedence.
+
 ### TO DO:
- 
  - Basic calculator functions: add, sub, mult, div
  - variables to update the display
  - operate function
