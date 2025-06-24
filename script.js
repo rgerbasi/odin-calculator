@@ -3,19 +3,25 @@
 /* 
 Current Idea: get all buttons, switch statement for different listeners
 */
+//state
 let entries = [];
 let current = "";
+let evaluated = false;
 let displayString = "";
 const display = document.querySelector('#display');
 
-const buttons = document.querySelectorAll('button');
+const buttonNodes = document.querySelectorAll('button');
 const numberButtons = document.querySelectorAll('.number');
-const operatorButtons =document.querySelectorAll('.operator');
+const operatorButtons = document.querySelectorAll('.operator');
 const equalButton = document.querySelector("#equals");
-buttons.forEach((button) => {
+
+const buttons = {};
+buttonNodes.forEach((button) => {
     //assign proper listener
     if (!button.id) return; // do nothing if no button id
     
+    buttons[button.id] = button;
+
     if (!isNaN(button.id)) { //is a number
         //number button listeners
         button.addEventListener("click", handleNumberPressed);
@@ -49,6 +55,7 @@ let baseSize = 4; //em
 let originalHeight = display.clientHeight;
 //DISPLAY FUNCTIONS
 function updateDisplay() {
+    current = current ?? ""; //safety
     checkValidButtons();
     displayString = toString([...entries, current]);
     display.textContent = displayString;
@@ -109,8 +116,12 @@ function handleNumberPressed(e) {
         entries.push(current);
         current = "";
     }
-    
-    current += this.id;
+    if (evaluated){
+        current = this.id;
+        evaluated = false;
+    } else {
+        current += this.id;
+    }
     updateDisplay()
 }
 
@@ -142,6 +153,9 @@ function handleOperatorPressed(e) {
 const decimalButton = document.querySelector("#decimal");
 function handleDecimalPressed(e) {
     // print(this);
+    if (current === ""){
+        current = "0";
+    }
     current += ".";
     updateDisplay();
 }
@@ -165,6 +179,7 @@ function handleEqualsPressed(e){
     print(postfix);
     current = evaluate(postfix);
     entries.length = 0 ;
+    evaluated = true;
     updateDisplay();
 }
 //Helper functions
@@ -188,7 +203,6 @@ function toPostFix(arr) {
         if (isNumber(token)) {
             output.push(token);
         }
-
         if (isOperator(token)){
             //check top of stack and add to output if op stack has >= prec
             while (
@@ -220,14 +234,88 @@ function evaluate(postfix){
         if (isOperator(token)){
             let b = stack.pop();
             let a = stack.pop();
+            //check for division 0
+            if (token === "÷" && b == 0){
+                alert("Yea nice try.");
+                handleClearPressed();
+                return;
+            }
             let result = operations[token](a,b);
             stack.push(result);
         }
     }
-    print(stack);
+    // print(stack);
     //validating result
     let result = stack.pop();
-    return String(result);
+    return result.toFixed(3);
+}
+function isValidKey(key) {
+    if (isNumber(key) || isOperator(key) || 
+        key === "Backspace" || key === "Enter" || key === "Shift" || key === ".") {
+        return true;
+    }
+    return false;
 }
 //initial calls
+
+//keyboard support
+window.addEventListener("keydown", (e) =>{
+    //translate input
+    let token = e.key;
+    if (e.key === "-"){
+        // print("minus")
+        token = "−"
+    }
+    if (e.key === "/") {
+        // print("divide")
+        token = "÷"
+    }
+    if (e.key === "*") {
+        // print("mult")
+        token = "×"
+    }
+    // print(e.key)
+    if (!isValidKey(token)) return;
+
+    if (isNumber(token)){
+        // print(buttons[token])
+        buttons[token].click();
+    }
+    if (isOperator(token)){
+        switch(token) {
+            case "+":
+                // print(buttons["plus"])
+                buttons["plus"].click();
+                break;
+            case "−":
+                // print(buttons["minus"])
+                buttons["minus"].click();
+                break;
+            case "×":
+                // print(buttons["times"])
+                buttons["times"].click();
+                break;
+            case "÷":
+                // print(buttons["divide"])
+                buttons["divide"].click();
+                break;
+        }
+    }
+    if (token === "."){
+    //    print(buttons["decimal"]);
+       buttons["decimal"].click();
+    }
+    if (token === "Backspace"){
+        buttons["delete"].click();
+    }
+    if (token === "Enter"){
+        // print(buttons["equals"])
+        buttons["equals"].click();
+    }
+    // print(token)
+    // print(isNumber(token));
+    // print(isOperator(token))
+
+})
+
 updateDisplay();
